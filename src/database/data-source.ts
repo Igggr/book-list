@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 import { DataSource } from "typeorm";
 import { parse } from 'pg-connection-string';
 import { UserEntity } from "src/user/user.entity";
+import { BookEntity } from "src/book/book.entity";
 const path = require('path');
 
 console.log('dotenv', dotenv);
@@ -17,7 +18,7 @@ export const AppDataSource = new DataSource({
     username: pgConfigMaster.user!,
     password: pgConfigMaster.password!,
     database: pgConfigMaster.database!,
-    entities: [UserEntity],
+    entities: [UserEntity, BookEntity],
     synchronize: true,
     logging: false,
     ssl: false,
