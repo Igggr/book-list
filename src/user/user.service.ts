@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { USER_REPOSITORY } from './user.providers';
-import * as bcrypt from 'bcrypt';
 import { User } from 'src/shared/types';
 import { hashPassword } from 'src/shared/utils';
 

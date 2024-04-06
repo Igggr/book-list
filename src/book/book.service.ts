@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { BOOK_REPOSITORY } from './book.providers';
 import { Repository } from 'typeorm';
 import { BookEntity } from './book.entity';
+import { Book } from 'src/shared/types';
 
 @Injectable()
 export class BookService {
@@ -12,14 +13,14 @@ export class BookService {
     }
 
     findBookById(bookId: number): Promise<BookEntity> {
-        return this._bookRepository.findOne({ where: { id: bookId } });
+        return this._bookRepository.findOne({ where: { id: bookId }, relations: ['owner'] });
     }
 
-    addBook(bookDto: Pick<BookEntity, 'title' | 'author' | 'description' | 'year'> & { userId: number }) {
+    addBook(bookDto: Pick<Book, 'title' | 'author' | 'description' | 'year'> & { userId: number }) {
         return this._bookRepository.save({ ...bookDto, owner: { id: bookDto.userId } })
     }
 
-    updateBook(bookId: number, bookDto: Pick<BookEntity, 'title' | 'author' | 'description' | 'year'>) {
+    updateBook(bookId: number, bookDto: Pick<Book, 'title' | 'author' | 'description' | 'year'>) {
         return this._bookRepository.update({ id: bookId }, bookDto)
     }
 

@@ -1,11 +1,9 @@
-const dotenv = require('dotenv');
+import * as dotenv from 'dotenv';
 import { DataSource } from "typeorm";
 import { parse } from 'pg-connection-string';
 import { UserEntity } from "src/user/user.entity";
 import { BookEntity } from "src/book/book.entity";
-const path = require('path');
 
-console.log('dotenv', dotenv);
 dotenv.config({ path: '.development.env' });
 
 const pgConfigMaster = parse(process.env.PG_URL_MASTER!);
