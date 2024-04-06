@@ -2,25 +2,31 @@ import { Inject, Injectable } from '@nestjs/common';
 import { BOOK_REPOSITORY } from './book.providers';
 import { Repository } from 'typeorm';
 import { BookEntity } from './book.entity';
-import { Book } from 'src/shared/types';
+import { AddBookDto, BookFilterable, Pageable } from 'src/shared/types';
 
 @Injectable()
 export class BookService {
     constructor(@Inject(BOOK_REPOSITORY) private _bookRepository: Repository<BookEntity>) { }
 
-    getBooks(): Promise<BookEntity[]> {
-        return this._bookRepository.find({})
+    getBooks({ pageable, filterable}: { pageable: Partial<Pageable>, filterable: Partial<BookFilterable>}): Promise<BookEntity[]> {
+        return this._bookRepository.find({
+            where: {
+                ...(filterable ? filterable : {})
+            },
+            ...(pageable ? pageable : {}),
+            order: (pageable?.order ? pageable.order: {id: 'ASC'})
+        })
     }
 
     findBookById(bookId: number): Promise<BookEntity> {
         return this._bookRepository.findOne({ where: { id: bookId }, relations: ['owner'] });
     }
 
-    addBook(bookDto: Pick<Book, 'title' | 'author' | 'description' | 'year'> & { userId: number }) {
+    addBook(bookDto: AddBookDto & { userId: number }) {
         return this._bookRepository.save({ ...bookDto, owner: { id: bookDto.userId } })
     }
 
-    updateBook(bookId: number, bookDto: Pick<Book, 'title' | 'author' | 'description' | 'year'>) {
+    updateBook(bookId: number, bookDto: Partial<AddBookDto>) {
         return this._bookRepository.update({ id: bookId }, bookDto)
     }
 

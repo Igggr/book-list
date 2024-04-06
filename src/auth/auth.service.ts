@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User, UserJwt } from 'src/shared/types';
+import { RegisterDto, User, UserJwt } from 'src/shared/types';
 import { isSameHash, toUserJwt } from 'src/shared/utils';
 import { UserService } from 'src/user/user.service';
 
@@ -32,7 +32,7 @@ export class AuthService {
         };
     }
 
-    async register(dto: Pick<User, 'username' | 'email' | 'password'>) {
+    async register(dto: RegisterDto) {
         const user = await this._userService.findByEmail(dto.email);
         if (user) {
             throw new HttpException(`Email ${dto.email} is already used`, HttpStatus.BAD_REQUEST);
