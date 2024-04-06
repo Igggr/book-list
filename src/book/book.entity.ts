@@ -1,8 +1,9 @@
+import { Book } from "src/shared/types/book";
 import { UserEntity } from "src/user/user.entity";
 import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class BookEntity {
+export class BookEntity implements Book {
     @PrimaryGeneratedColumn()
     id: number;
 

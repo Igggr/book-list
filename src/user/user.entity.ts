@@ -1,8 +1,9 @@
 import { BookEntity } from 'src/book/book.entity';
+import { User } from 'src/shared/types/user';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
-export class UserEntity {
+export class UserEntity implements User {
     @PrimaryGeneratedColumn()
     id: number;
 

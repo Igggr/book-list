@@ -16,7 +16,7 @@ export class BookService {
     }
 
     addBook(bookDto: Pick<BookEntity, 'title' | 'author' | 'description' | 'year'> & { userId: number }) {
-        return this._bookRepository.save({ ...bookDto, user: { id: bookDto.userId}})
+        return this._bookRepository.save({ ...bookDto, owner: { id: bookDto.userId } })
     }
 
     updateBook(bookId: number, bookDto: Pick<BookEntity, 'title' | 'author' | 'description' | 'year'>) {
