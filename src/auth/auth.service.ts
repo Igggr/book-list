@@ -12,7 +12,7 @@ export class AuthService {
     
     async validateUserViaPassword(username: string, password: string): Promise<UserJwt | null> {
         const user = await this._userService.findByUsername(username)
-        if (user && isSameHash(password, user.password)) {
+        if (user && await isSameHash(password, user.password)) {
             return toUserJwt(user);
         }
         return null;
