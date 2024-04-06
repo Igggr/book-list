@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { BOOK_REPOSITORY } from './book.providers';
 import { Repository } from 'typeorm';
 import { BookEntity } from './book.entity';
@@ -18,8 +18,16 @@ export class BookService {
         })
     }
 
-    findBookById(bookId: number): Promise<BookEntity> {
-        return this._bookRepository.findOne({ where: { id: bookId }, relations: ['owner'] });
+    async findBookById(bookId: number, withOwner: boolean): Promise<BookEntity> {
+        const book = await this._bookRepository.findOne({
+            where: { id: bookId },
+            ...(withOwner ? { relations: ['owner'] } : {})
+        });
+        if (!book) {
+            throw new HttpException(`Book with id ${bookId} does not exist`, HttpStatus.NOT_FOUND)
+        }
+        return book;
+    
     }
 
     addBook(bookDto: AddBookDto & { userId: number }) {

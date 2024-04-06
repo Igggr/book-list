@@ -7,7 +7,6 @@ import { BookEntity } from "src/book/book.entity";
 dotenv.config({ path: '.development.env' });
 
 const pgConfigMaster = parse(process.env.PG_URL_MASTER!);
-console.log(pgConfigMaster)
 
 export const AppDataSource = new DataSource({
     type: 'postgres',

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterDto, User, UserJwt } from 'src/shared/types';
 import { isSameHash, toUserJwt } from 'src/shared/utils';
 import { UserService } from 'src/user/user.service';
+import { LoginDTO } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -10,9 +11,9 @@ export class AuthService {
         private _jwtService: JwtService,
     ) { }
     
-    async validateUserViaPassword(username: string, password: string): Promise<UserJwt | null> {
-        const user = await this._userService.findByUsername(username)
-        if (user && await isSameHash(password, user.password)) {
+    async validateUserViaPassword(dto: LoginDTO): Promise<UserJwt | null> {
+        const user = await this._userService.findByUsername(dto.username)
+        if (user && await isSameHash(dto.password, user.password)) {
             return toUserJwt(user);
         }
         return null;

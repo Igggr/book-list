@@ -10,13 +10,12 @@ export class OwnerGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const user: UserJwt = request.user;
         const bookId = Number(request.params.id);
-        const book = await this._bookService.findBookById(bookId);
+        const book = await this._bookService.findBookById(bookId, true);
         if (!book) {
-            console.log('Such book does not exist');
             return false;
         }
 
-        console.log(`User ${user.id} tried to modify book of ${book.owner.id} user`)
+        console.log(`User ${user.id} tried to modify book of ${book.owner.id} user`);
 
         return book.owner.id === user.id;
     }

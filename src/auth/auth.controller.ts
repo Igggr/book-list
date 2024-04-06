@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { RegisterDto, User, UserJwt } from 'src/shared/types';
+import { UserJwt } from 'src/shared/types';
 import { Request as RequestType } from 'express';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -18,9 +18,9 @@ export class AuthController {
     @ApiOperation({ summary: 'Аутентификация' })
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Request() request: RequestType & { user: UserJwt }) {
+    async login(@Request() request: RequestType & { user: UserJwt },
+    ) {
         const user: UserJwt = request.user;
-        console.log(request.user)
         return this._authService.login(user);
     }
 
@@ -28,7 +28,7 @@ export class AuthController {
     @ApiResponse({ type: AccessToken })
     @ApiOperation({ summary: 'Регистрация нового пользователя'})
     @Post('register')
-    async register(@Body() dto: RegisterDto) {
+    async register(@Body() dto: RegisterDTO) {
         return this._authService.register(dto);
     }
 

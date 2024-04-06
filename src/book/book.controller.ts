@@ -3,12 +3,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { Request as RequestType } from 'express';
 
 import { BookService } from './book.service';
-import { UserJwt, AddBookDto, Pageable, BookFilterable } from 'src/shared/types';
+import { UserJwt, AddBookDto, Pageable, BookFilterable, PageableDTO, BookFilterableDTO } from 'src/shared/types';
 import { OwnerGuard } from './owner.guard';
 import { parseQuery, pick } from 'src/shared/utils';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, PartialType } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, IntersectionType, PartialType } from '@nestjs/swagger';
 import { AddBookDTO } from './dto/addBookDto';
-import { BookDTO } from './dto/addBookDto copy';
+import { BookDTO } from './dto/bookDto';
 
 @Controller('books')
 export class BookController {
@@ -21,14 +21,14 @@ export class BookController {
     @Post()
     createBook(
         @Request() request: RequestType & { user: UserJwt },
-        @Body() dto: AddBookDto) {
+        @Body() dto: AddBookDTO) {
         const user: UserJwt = request.user;
-        console.log(user)
         return this._bookService.addBook({ ...dto, userId: user.id });
     }
 
     @ApiResponse({ type: [BookDTO] })
     @ApiOperation({ summary: 'Получение списка книг' })
+    @ApiQuery({type: IntersectionType(PageableDTO, BookFilterableDTO)})
     @Get()
     getBooks(@Query() query: Partial<Pageable & BookFilterable>) {
         const pageableKeys = ['take', 'order', 'skip'] as const;
@@ -44,7 +44,7 @@ export class BookController {
     @ApiOperation({ summary: 'получение детальной информации о книге по ID'})
     @Get("/:id")
     getBook(@Param('id', ParseIntPipe) id: number) {
-        return this._bookService.findBookById(id);
+        return this._bookService.findBookById(id, false);
     }
 
     @ApiBearerAuth('defaultBearerAuth')
@@ -57,7 +57,8 @@ export class BookController {
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: Partial<AddBookDto>,
     ) {
-        return this._bookService.updateBook(id, dto);
+        this._bookService.updateBook(id, dto);
+        return 'Ok';
     }
 
     @ApiBearerAuth('defaultBearerAuth')
@@ -68,6 +69,7 @@ export class BookController {
         @Request() request: RequestType & { user: UserJwt },
         @Param('id', ParseIntPipe) id: number,
     ) {
-        return this._bookService.deleteBook(id);
+        this._bookService.deleteBook(id);
+        return 'Ok';
     }
 }
